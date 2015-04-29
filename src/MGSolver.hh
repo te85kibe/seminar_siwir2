@@ -13,6 +13,9 @@ class MGSolver
 		// will allocate memory for all needed arrays
 		MGSolver ( int levels );
 
+		// initializes rhs and initial values for ex01
+		void initialize_assignment_01();
+
 		// performes times v-cycles
 		void v_cycle ( int pre_smooth,
                        int post_smooth,
@@ -26,6 +29,7 @@ class MGSolver
 	
 		std::vector<Array *> v_grids_;
 		std::vector<Array *> r_grids_;
+		std::vector<real>    h_intervals_;    // grid spacing for each level
 
 		void apply_operator_2d_poisson ( Array & source, Array & target );
 
@@ -33,6 +37,7 @@ class MGSolver
                            int post_smooth,
                            int level			// solve when level == 1
                          );
+
 
 };
 
