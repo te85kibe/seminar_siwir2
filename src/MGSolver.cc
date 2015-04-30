@@ -4,16 +4,18 @@
 
 #include "MGSolver.hh"
 #include "Array.hh"
+#include "Smoother.hh"
 
 #ifndef PI
 #define PI (3.1415)
 #endif
 
-MGSolver::MGSolver ( int levels )
+MGSolver::MGSolver ( int levels, Smoother & smoother )
 	: levels_ (levels)
 	, v_grids_(levels, NULL)
 	, r_grids_(levels, NULL)
 	, h_intervals_(levels, 0)
+	, smoother_(smoother)
 {
 
 	 //v_grids_(levels, 0);
@@ -28,8 +30,11 @@ MGSolver::MGSolver ( int levels )
 		r_grids_[i-1] = new Array ( std::pow(2, i) - 1, std::pow(2, i) - 1);
 		h_intervals_[i-1] = 1.0 / std::pow(2, i);
 
+		
+#if 0
 		std::cout << h_intervals_[i-1] << std::endl;
 		v_grids_[i-1]->print();
+#endif
 		
 	}	
 
@@ -79,7 +84,21 @@ void MGSolver::v_cycle_pvt ( int pre_smooth,
 	(void) pre_smooth;
 	(void) post_smooth;
 	(void) level;
+
+	if (level == 1)
+	{
+		// SOLVE
+		return;
+	}
+		
 	// 1. do pre_smooth gauss seidel iterations on v
+	smoother_.smooth_red_black_gauss_seidel_2d ( * v_grids_[level-1],
+                                                 * r_grids_[level-1],
+                                                 pre_smooth,
+                                                 h_intervals_[level-1]);
+
+	std::cout << std::endl;
+	v_grids_[level-1]->print();	
 
 	// 2. 
 }

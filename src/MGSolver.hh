@@ -5,13 +5,14 @@
 
 #include "Array.hh"
 #include "Types.hh"
+#include "Smoother.hh"
 
 class MGSolver
 {
 	public:
 	
 		// will allocate memory for all needed arrays
-		MGSolver ( int levels );
+		MGSolver ( int levels, Smoother & smoother );
 
 		// initializes rhs and initial values for ex01
 		void initialize_assignment_01();
@@ -30,6 +31,8 @@ class MGSolver
 		std::vector<Array *> v_grids_;
 		std::vector<Array *> r_grids_;
 		std::vector<real>    h_intervals_;    // grid spacing for each level
+
+		Smoother smoother_;
 
 		void apply_operator_2d_poisson ( Array & source, Array & target );
 
