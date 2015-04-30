@@ -41,6 +41,11 @@ class MGSolver
                            int level			// solve when level == 1
                          );
 
+		real residual_2d ( Array & u,
+                           Array & f,
+                           real h
+                         );
+
 
 };
 

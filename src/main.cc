@@ -9,7 +9,7 @@ main()
 	Smoother smoother;
 	MGSolver solver(4, smoother);
 	solver.initialize_assignment_01();
-	solver.v_cycle(1, 1, 100);
+	solver.v_cycle(1, 1, 1000);
 
 	return 0;
 }
