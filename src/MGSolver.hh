@@ -16,6 +16,7 @@ class MGSolver
 
 		// initializes rhs and initial values for ex01
 		void initialize_assignment_01();
+		void initialize_random();
 
 		// performes times v-cycles
 		void v_cycle ( int pre_smooth,
@@ -48,6 +49,11 @@ class MGSolver
                                        int current_level,
                                        real h           
                                      );
+
+		void error_correction ( Array & u,
+                                Array & e_2h,
+                                int current_level
+                              );
 
 		real residual_2d ( Array & u,
                            Array & f,
