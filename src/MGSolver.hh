@@ -30,6 +30,7 @@ class MGSolver
 	
 		std::vector<Array *> v_grids_;
 		std::vector<Array *> r_grids_;
+		std::vector<Array *> tmp_grids_;
 		std::vector<real>    h_intervals_;    // grid spacing for each level
 
 		Smoother smoother_;
@@ -40,6 +41,13 @@ class MGSolver
                            int post_smooth,
                            int level			// solve when level == 1
                          );
+
+		void compose_right_hand_side ( Array & u,  
+                                       Array & f,
+                                       Array & r_2h,
+                                       int current_level,
+                                       real h           
+                                     );
 
 		real residual_2d ( Array & u,
                            Array & f,
