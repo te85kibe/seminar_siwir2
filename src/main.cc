@@ -5,7 +5,7 @@
 int 
 main(int argc, char **args)
 {
-/*	if(argc != 3){
+	if(argc != 3){
 		std::cout << "Usage: ./mgsolve <number_of_levels> <number_of_V-cycles>" << std::endl;
 	return 0;
 	}
@@ -28,9 +28,7 @@ main(int argc, char **args)
 	}
 //	iss.str("");
 //	iss.clear();
-*/
-int l = 4;
-int n = 10;
+
 	Smoother smoother;
 	MGSolver solver(l, smoother);
 	solver.initialize_assignment_01();
