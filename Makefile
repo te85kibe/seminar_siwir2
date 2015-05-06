@@ -1,4 +1,4 @@
-TAG = GCC
+TAG = GCCdebug
 
 #CONFIGURE BUILD SYSTEM
 TARGET	   = mgsolve

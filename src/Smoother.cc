@@ -20,128 +20,40 @@ void Smoother::smooth_red_black_gauss_seidel_2d ( Array & u,    // modify this a
 	for (int iter = 0; iter < times; iter++)
 	{
 		// red points
-		for (int j = 0; j < height; j++)
+		for (int j = 1; j < height-1; j++)
 		{
 			int i;
 			if (j % 2 == 0)
 			{
-				i = 0;
+				i = 1;
 			}
 			else
 			{
-				i = 1;
+				i = 2;
 			}
 				
-			for (; i < width; i+=2)
+			for (; i < width-1; i+=2)
 			{
-				// bottom left corner
-				if (i == 0 && j == 0)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i+1, j) + u(i, j+1)));
-				}
-				// top left corner
-				else if (i == 0 && j == height-1)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i+1, j) + u(i, j-1)));
-				}
-				// bottom right corner
-				else if (i == width-1 && j == 0)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i, j+1)));
-				}
-				// top right corner
-				else if (i == width-1 && j == height-1)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i, j-1)));
-				}
-				// left side
-				else if (i == 0)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i+1, j) + u(i, j+1) + u(i, j-1)));
-				}
-				// right side
-				else if (i == width-1)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i, j+1) + u(i, j-1)));
-				}
-				// bottom
-				else if (j == 0)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i+1, j) + u(i, j+1)));
-				}
-				// top
-				else if (j == height-1)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i+1, j) + u(i, j-1)));
-				}
-				// inner domain
-				else
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i+1, j) + u(i, j+1) + u(i, j-1)));
-				}
+				u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i+1, j) + u(i, j+1) + u(i, j-1)));
 			}
 		}
 	
 		// black points
-		for (int j = 0; j < height; j++)
+		for (int j = 1; j < height-1; j++)
 		{
 			int i;
 			if (j % 2 == 0)
 			{
-				i = 1;
+				i = 2;
 			}
 			else
 			{
-				i = 0;
+				i = 1;
 			}
 				
-			for (; i < width; i+=2)
+			for (; i < width-1; i+=2)
 			{
-				// bottom left corner
-				if (i == 0 && j == 0)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i+1, j) + u(i, j+1)));
-				}
-				// top left corner
-				else if (i == 0 && j == height-1)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i+1, j) + u(i, j-1)));
-				}
-				// bottom right corner
-				else if (i == width-1 && j == 0)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i, j+1)));
-				}
-				// top right corner
-				else if (i == width-1 && j == height-1)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i, j-1)));
-				}
-				// left side
-				else if (i == 0)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i+1, j) + u(i, j+1) + u(i, j-1)));
-				}
-				// right side
-				else if (i == width-1)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i, j+1) + u(i, j-1)));
-				}
-				// bottom
-				else if (j == 0)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i+1, j) + u(i, j+1)));
-				}
-				// top
-				else if (j == height-1)
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i+1, j) + u(i, j-1)));
-				}
-				// inner domain
-				else
-				{
-					u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i+1, j) + u(i, j+1) + u(i, j-1)));
-				}
+				u(i,j) = factor * (f(i,j) + h_2_inv * ( u(i-1, j) + u(i+1, j) + u(i, j+1) + u(i, j-1)));
 			}
 		}
 	}
