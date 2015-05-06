@@ -1,13 +1,15 @@
 
 #include <cmath>
 #include <iostream>
+#include <cmath>
+#include <math.h>
 
 #include "MGSolver.hh"
 #include "Array.hh"
 #include "Smoother.hh"
 
 #ifndef PI
-#define PI (3.1415)
+#define PI (M_PI)
 #endif
 
 MGSolver::MGSolver ( int levels, Smoother & smoother )
