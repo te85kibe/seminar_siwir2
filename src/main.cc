@@ -34,7 +34,7 @@ main(int argc, char **args)
 	solver.initialize_assignment_01();
 //	solver.initialize_random();
 	solver.v_cycle(2, 1, n);
-	solver.saveToFile();
+	solver.saveToFile("solution.txt");
 
 	return 0;
 }
