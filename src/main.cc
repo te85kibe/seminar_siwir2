@@ -1,6 +1,7 @@
 #include <iostream>
 #include "MGSolver.hh"
 #include "Smoother.hh"
+#include "Timer.hh"
 
 int 
 main(int argc, char **args)
@@ -12,6 +13,11 @@ main(int argc, char **args)
 	
 	int l;
 	int n;
+	
+	//time
+	siwir::Timer t;
+	double time;
+
 
 	std::istringstream iss(args[1]);
 	if(!(iss >> l)){
@@ -26,14 +32,14 @@ main(int argc, char **args)
 		std::cerr << "Could not parse number of V-cycle argument: " << args[2] << std::endl;
 		return 1;
 	}
-//	iss.str("");
-//	iss.clear();
 
 	Smoother smoother;
 	MGSolver solver(l, smoother);
 	solver.initialize_assignment_01();
-//	solver.initialize_random();
+	
 	solver.v_cycle(2, 1, n);
+	time = t.elapsed();
+	std::cout << "Time: " << "\t" << time << std::endl;
 	solver.saveToFile("solution.txt");
 
 	return 0;
