@@ -23,7 +23,8 @@ class MGSolver
                        int post_smooth,
                        int times
                      );
-	
+		int saveToFile() const;
+
 
 	private:
 

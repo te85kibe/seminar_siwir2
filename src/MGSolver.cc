@@ -1,8 +1,8 @@
-
 #include <cmath>
 #include <iostream>
 #include <cmath>
 #include <math.h>
+#include <fstream>
 
 #include "MGSolver.hh"
 #include "Array.hh"
@@ -331,4 +331,30 @@ real MGSolver::residual_2d ( Array & u,
 
 
 	return sqrt(sum / (real) ((width-2) * (height-2)));
+}
+
+int MGSolver::saveToFile() const
+{
+	Array *u = v_grids_.back();
+	std::cout << "width: " << u->getSize(DIM_1D) << std::endl;
+
+	std::ofstream gnuFile("loesung.txt");
+	if (gnuFile.is_open())
+	{
+		gnuFile << "# x y u(x,y)" << "\n";
+		for (int j = u->getSize(DIM_2D) - 1; j >= 0; j--)
+		{
+			for (int i = 0; i < u->getSize(DIM_1D); i++)
+			{
+				gnuFile << i << " " << j << " " << u->operator()(i,j) << "\n";
+			}
+			gnuFile << "\n";
+		}
+		gnuFile.close();
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
 }
