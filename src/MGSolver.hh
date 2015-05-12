@@ -23,7 +23,7 @@ class MGSolver
                        int post_smooth,
                        int times
                      );
-		int saveToFile() const;
+		int saveToFile(std::string filename) const;
 
 
 	private:

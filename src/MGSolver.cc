@@ -333,12 +333,12 @@ real MGSolver::residual_2d ( Array & u,
 	return sqrt(sum / (real) ((width-2) * (height-2)));
 }
 
-int MGSolver::saveToFile() const
+int MGSolver::saveToFile(std::string filename) const
 {
 	Array *u = v_grids_.back();
-	std::cout << "width: " << u->getSize(DIM_1D) << std::endl;
+//	std::cout << "width: " << u->getSize(DIM_1D) << std::endl;
 
-	std::ofstream gnuFile("loesung.txt");
+	std::ofstream gnuFile(filename);
 	if (gnuFile.is_open())
 	{
 		gnuFile << "# x y u(x,y)" << "\n";
