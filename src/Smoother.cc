@@ -17,6 +17,8 @@ void Smoother::smooth_red_black_gauss_seidel_2d ( Array & u,    // modify this a
 	real h_2_inv = 1.0 / h_2;
 	real factor  = h_2 * 0.25;
 
+
+//alte variante
 	for (int iter = 0; iter < times; iter++)
 	{
 		// red points
