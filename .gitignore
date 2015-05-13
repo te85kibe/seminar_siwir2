@@ -1,4 +1,7 @@
 GCC/
 GCCDebug/
+GCCNeumann/
+GCCDirichlet/
 mgsolve
 *.swp
+solution.txt

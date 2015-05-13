@@ -1,14 +1,26 @@
 
+#if 1
 #include "Smoother.hh"
 #include "Types.hh"
 #include "Array.hh"
+#include "MGSolver.hh"
 
 void Smoother::smooth_red_black_gauss_seidel_2d ( Array & u,    // modify this array
                                                   Array & f,    // rhs
                                                   int times,     // number of sweeps
-                                                  real h        // spacing         
+                                                  real h,       // spacing         
+												  bool finest_grid
                                                 )
 {
+
+#ifdef NEUMANN
+	if (finest_grid)
+	{
+		update_neumann ( u, h );
+	}
+#endif
+
+	(void) finest_grid;
 
 	int width  = u.getSize(DIM_1D);
 	int height = u.getSize(DIM_2D);
@@ -44,3 +56,21 @@ void Smoother::smooth_red_black_gauss_seidel_2d ( Array & u,    // modify this a
 		}
 	}
 }
+
+void Smoother::update_neumann( Array & u,
+                               real h ) 
+{
+    /*  
+        To update neumann bc, set the boundary points to (u_inner - h)
+        This comes from the first order difference: (u_boundary - u_inner) / h = -1
+    */  
+
+    for (int row = 0; row < u.getSize(DIM_2D); row++)
+    {   
+        u(0, row) = u(1, row) - h;
+        u(u.getSize(DIM_1D)-1, row) = u(u.getSize(DIM_1D)-2, row) - h;
+    }   
+}
+
+
+#endif

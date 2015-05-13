@@ -12,6 +12,9 @@
 #define PI (M_PI)
 #endif
 
+#define PRINT_ERROR (1)
+#define PRINT_RESIDUAL (1)
+
 MGSolver::MGSolver ( int levels, Smoother & smoother )
 	: levels_ (levels)
 	, v_grids_(levels, NULL)
@@ -24,10 +27,12 @@ MGSolver::MGSolver ( int levels, Smoother & smoother )
 	 //v_grids_(levels, 0);
 	 //r_grids_(levels, 0);
 
+	// initialize solution
+	solution_ = new Array(std::pow(2, levels) + 1, std::pow(2, levels) + 1);
+
 	// allocate memory for v and r
 	for (int i = 1; i <= levels; i++)
 	{
-		std::cout << i << std::endl;
 
 		v_grids_[i-1] = new Array ( std::pow(2, i) + 1, std::pow(2, i) + 1);
 		r_grids_[i-1] = new Array ( std::pow(2, i) + 1, std::pow(2, i) + 1);
@@ -57,10 +62,51 @@ void MGSolver::initialize_assignment_01 ()
          col < finest_grid->getSize(DIM_1D); 
          col++)
 	{
-		finest_grid->operator()(col, finest_grid->getSize(DIM_2D)-1) = sin(PI * (real) col * h) * sinh(PI * h);
+		finest_grid->operator()(col, finest_grid->getSize(DIM_2D)-1) = sin(PI * (real) col * h) * sinh(PI);
+	}
+
+
+
+	// initialize solution
+	for (int row = 0; row < solution_->getSize(DIM_2D); row++)
+	{
+		for (int col = 0; col < solution_->getSize(DIM_1D); col++)
+		{
+			solution_->operator()(col, row) = sin(PI * (real) col * h) * sinh(PI * (real) row * h);	
+		}
+	}
+}
+
+
+void MGSolver::initialize_assignment_01_BONUS ()
+{
+	// init Dirichlet BC
+	Array * finest_grid = v_grids_.back();
+	real h				= h_intervals_.back();
+
+	for (int col = 0;
+         col < finest_grid->getSize(DIM_1D); 
+         col++)
+	{
+		finest_grid->operator()(col, 0) 								= h*col * (1.0 - h*col);
+		finest_grid->operator()(col, finest_grid->getSize(DIM_2D)-1) 	= h*col * (1.0 - h*col);               
+	}
+
+	// initialize solution
+	// solution should be f(x, y) = - x^2 + x
+	for (int row = 0; row < solution_->getSize(DIM_2D); row++)
+	{
+		for (int col = 0; col < solution_->getSize(DIM_1D); col++)
+		{
+			solution_->operator()(col, row) = - ((real) col * h) * ((real) col * h) + (real) col * h;
+		}
 	}
 	
 
+
+	// initialize rhs
+	r_grids_.back()->fill(2.0);
+	
 }
 
 void MGSolver::initialize_random ()
@@ -82,21 +128,25 @@ void MGSolver::v_cycle     ( int pre_smooth,
 	for (int i = 0; i < times; i++)
 	{
 		v_cycle_pvt (pre_smooth, post_smooth, levels_);
-#if 0
-		std::cout << std::endl;
 
-		std::cout << "Cycle no " << i + 1 << std::endl;
-		
-		// v_grids_.back()->print();
-
-		std::cout << std::endl;
-#endif
+#if PRINT_RESIDUAL
 		real residual = residual_2d ( * v_grids_.back(),
 									  * r_grids_.back(),
 									  h_intervals_.back());
-
 		std::cout << "Residual (cylcle no " << i + 1 << "): " << residual << std::endl;
-	}
+#endif
+
+#if PRINT_ERROR
+		real error = error_L2 ( * v_grids_.back(),
+								* solution_,
+								h_intervals_.back());
+		std::cout << "Error    (cylcle no " << i + 1 << ", h = " << h_intervals_.back() << " ): " << error    << std::endl;
+
+
+#endif
+
+		
+	} 
 }
 
 
@@ -109,6 +159,8 @@ void MGSolver::v_cycle_pvt ( int pre_smooth,
 	(void) pre_smooth;
 	(void) post_smooth;
 	(void) level;
+
+	// 
 
 
 	if (level == 1)
@@ -134,7 +186,8 @@ void MGSolver::v_cycle_pvt ( int pre_smooth,
 	smoother_.smooth_red_black_gauss_seidel_2d ( * v_grids_[level-1],
                                                  * r_grids_[level-1],
                                                  pre_smooth,
-                                                 h_intervals_[level-1]);
+                                                 h_intervals_[level-1],
+												 level == v_grids_.size());	// true if finest grid
 
 #if 1
 
@@ -164,7 +217,8 @@ void MGSolver::v_cycle_pvt ( int pre_smooth,
 	smoother_.smooth_red_black_gauss_seidel_2d ( * v_grids_[level-1],
                                                  * r_grids_[level-1],
                                                  post_smooth,
-                                                 h_intervals_[level-1]);
+                                                 h_intervals_[level-1],
+												 level == v_grids_.size());	// true if finest grid
 #endif
 
 #if 0
@@ -307,6 +361,51 @@ void MGSolver::compose_right_hand_side ( Array & u,
 	}   
 	}
 }
+
+void MGSolver::restrict_2d ( Array & u,
+                             Array & u_2h)
+{
+
+	int width  = u_2h.getSize(DIM_1D);
+    int height = u_2h.getSize(DIM_2D);
+
+	// weighting for the restriction
+	// stencil:
+	//
+	// w1 w2 w3
+	// w4 w5 w6
+	// w7 w8 w9
+
+	real w1 = 0.0625;
+	real w2 = 0.125;
+	real w3 = 0.0625;
+	real w4 = 0.125;
+	real w5 = 0.25;
+	real w6 = 0.125;
+	real w7 = 0.0625;
+	real w8 = 0.125;
+	real w9 = 0.0625;
+
+	// restrict to coarser domain
+	for (int j = 1; j < height-1; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		int mid_i = 2*i;
+		int mid_j = 2*j;
+		
+		u_2h(i, j) = w1 * u(mid_i - 1, mid_j + 1) +
+		             w2 * u(mid_i    , mid_j + 1) +
+		             w3 * u(mid_i + 1, mid_j + 1) +
+		             w4 * u(mid_i - 1, mid_j    ) +
+		             w5 * u(mid_i    , mid_j    ) +
+		             w6 * u(mid_i + 1, mid_j    ) +
+		             w7 * u(mid_i - 1, mid_j - 1) +
+		             w8 * u(mid_i    , mid_j - 1) +
+		             w9 * u(mid_i + 1, mid_j - 1);
+	}
+	}
+}
+                             
 	
 
 real MGSolver::residual_2d ( Array & u,
@@ -331,6 +430,29 @@ real MGSolver::residual_2d ( Array & u,
 
 
 	return sqrt(sum / (real) ((width-2) * (height-2)));
+}
+
+real MGSolver::error_L2 ( Array & approximation,
+							Array & solution,
+							real h
+						  )
+{
+	real sum = 0.0;	
+
+	int width  = approximation.getSize(DIM_1D);
+    int height = approximation.getSize(DIM_2D);
+
+	// add up squares of the entries of the residual
+	for (int j = 1; j < height-1; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		sum += pow(approximation(i,j) - solution(i,j), 2.0);
+	}   
+	}
+
+	return sqrt(sum / (real) ((width-2) * (height-2)));
+
+	
 }
 
 int MGSolver::saveToFile(std::string filename) const

@@ -16,6 +16,7 @@ class MGSolver
 
 		// initializes rhs and initial values for ex01
 		void initialize_assignment_01();
+		void initialize_assignment_01_BONUS ();
 		void initialize_random();
 
 		// performes times v-cycles
@@ -34,6 +35,8 @@ class MGSolver
 		std::vector<Array *> r_grids_;
 		std::vector<Array *> tmp_grids_;
 		std::vector<real>    h_intervals_;    // grid spacing for each level
+		
+		Array * solution_;
 
 		Smoother smoother_;
 
@@ -60,6 +63,15 @@ class MGSolver
                            Array & f,
                            real h
                          );
+		
+		void restrict_2d ( Array & u,
+                             Array & u_2h);
+
+		real error_L2 ( Array & approximation,
+                            Array & solution,
+                            real h
+                          )	;
+
 
 
 };

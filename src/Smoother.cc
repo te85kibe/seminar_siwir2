@@ -1,4 +1,4 @@
-
+#if 0
 #include "Smoother.hh"
 #include "Types.hh"
 #include "Array.hh"
@@ -60,4 +60,4 @@ void Smoother::smooth_red_black_gauss_seidel_2d ( Array & u,    // modify this a
 		}
 	}
 }
-
+#endif

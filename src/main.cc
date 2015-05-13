@@ -35,7 +35,11 @@ main(int argc, char **args)
 
 	Smoother smoother;
 	MGSolver solver(l, smoother);
+#ifdef NEUMANN
+	solver.initialize_assignment_01_BONUS();
+#else
 	solver.initialize_assignment_01();
+#endif
 	
 	solver.v_cycle(2, 1, n);
 	time = t.elapsed();
