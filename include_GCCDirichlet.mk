@@ -3,11 +3,11 @@ CXX = g++
 FC  = gfortran
 LINKER = $(CXX)
 
-CFLAGS   = -O3 -Wno-format  -Wall -DNDEBUG -Winline -Wshadow -std=c++11
+CFLAGS   = -O3 -Wall -Winline -Wshadow -std=c++11
 CXXFLAGS = $(CFLAGS)
 FCFLAGS  = 
-CPPFLAGS = -std=c++0x
+CPPFLAGS = $(CFLAGS)
 LFLAGS   =  
-DEFINES  = -D_GNU_SOURCE
+DEFINES  =
 INCLUDES =
 LIBS     =
