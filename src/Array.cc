@@ -235,6 +235,77 @@ real Array::getAbsMax()
 	return max;
 }
 
+// Operator() 1D
+real& Array::operator ()(int i)
+{
+   //TODO
+   //static double dummy;
+    CHECK_MSG(i >= 0 && i < size_, "Index i out of bounds");
+    CHECK_MSG(dimension_ == DIM_1D, "Wrong dimension.");
+   return ar[i];
+}
+
+// Operator() 2D
+real& Array::operator ()(int i,int j)
+{
+   //TODO
+   //static double dummy;
+    CHECK_MSG(i >= 0 && i < xSize_, "Index i out of bounds");
+    CHECK_MSG(j >= 0 && j < ySize_, "Index j out of bounds");
+    CHECK_MSG(dimension_ == DIM_2D, "Wrong dimension.");
+   return ar[xSize_*j + i]; 
+}
+
+// Operator() 3D
+real& Array::operator ()(int i, int j, int k)
+{
+   //TODO
+   //static double dummy;
+    CHECK_MSG(i >= 0 && i < xSize_, "Index i out of bounds");
+    CHECK_MSG(j >= 0 && j < ySize_, "Index j out of bounds");
+    CHECK_MSG(k >= 0 && k < zSize_, "Index k out of bounds");
+    CHECK_MSG(dimension_ == DIM_3D, "Wrong dimension.");
+   return ar[(xSize_ * ySize_)*k + xSize_*j + i]; 
+}
+
+///////////
+// CONST //
+///////////
+
+// Operator() 1D
+const real& Array::operator ()(int i) const
+{
+   //TODO
+   //static double dummy;
+    CHECK_MSG(i >= 0 && i < size_, "Index i out of bounds");
+    CHECK_MSG(dimension_ == DIM_1D, "Wrong dimension.");
+   return ar[i];
+}
+
+// Operator() 2D
+const real& Array::operator ()(int i,int j) const
+{
+   //TODO
+   //static double dummy;
+    CHECK_MSG(i >= 0 && i < xSize_, "Index i out of bounds");
+    CHECK_MSG(j >= 0 && j < ySize_, "Index j out of bounds");
+    CHECK_MSG(dimension_ == DIM_2D, "Wrong dimension.");
+   return ar[xSize_*j + i];
+}
+
+// Operator() 3D
+const real& Array::operator ()(int i, int j, int k) const
+{
+   //TODO
+   //static double dummy;
+    CHECK_MSG(i >= 0 && i < xSize_, "Index i out of bounds");
+    CHECK_MSG(j >= 0 && j < ySize_, "Index j out of bounds");
+    CHECK_MSG(k >= 0 && k < zSize_, "Index k out of bounds");
+    CHECK_MSG(dimension_ == DIM_3D, "Wrong dimension.");
+   return ar[(xSize_ * ySize_)*k + xSize_*j + i];
+}
+
+
 #if 0
 void Array::normalize()
 {

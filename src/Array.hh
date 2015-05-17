@@ -31,14 +31,14 @@ public:
 
 
    // Access Operators for 1D, 2D and 3D
-   inline real & operator () ( int i );
-   inline real & operator () ( int i ,int j );
-   inline real & operator () ( int i, int j, int k );
+   real & operator () ( int i );
+   real & operator () ( int i ,int j );
+   real & operator () ( int i, int j, int k );
 
    // for const Arrays the following access operators are required
-   inline const real & operator () ( int i ) const;
-   inline const real & operator () ( int i ,int j ) const;
-   inline const real & operator () ( int i, int j, int k ) const;
+   const real & operator () ( int i ) const;
+   const real & operator () ( int i ,int j ) const;
+   const real & operator () ( int i, int j, int k ) const;
 
 
 
@@ -90,83 +90,6 @@ private:
 };
 
 
-//===================================================================================================================
-//
-//  Inline Access Operators and Sizes
-//
-//===================================================================================================================
-
-
-
-// Operator() 1D
-inline real& Array::operator ()(int i)
-{
-   //TODO
-   //static double dummy;
-	CHECK_MSG(i >= 0 && i < size_, "Index i out of bounds");
-	CHECK_MSG(dimension_ == DIM_1D, "Wrong dimension.");
-   return ar[i];
-}
-
-// Operator() 2D
-inline real& Array::operator ()(int i,int j)
-{
-   //TODO
-   //static double dummy;
-	CHECK_MSG(i >= 0 && i < xSize_, "Index i out of bounds");
-	CHECK_MSG(j >= 0 && j < ySize_, "Index j out of bounds");
-	CHECK_MSG(dimension_ == DIM_2D, "Wrong dimension.");
-   return ar[xSize_*j + i];
-}
-
-// Operator() 3D
-inline real& Array::operator ()(int i, int j, int k)
-{
-   //TODO
-   //static double dummy;
-	CHECK_MSG(i >= 0 && i < xSize_, "Index i out of bounds");
-	CHECK_MSG(j >= 0 && j < ySize_, "Index j out of bounds");
-	CHECK_MSG(k >= 0 && k < zSize_, "Index k out of bounds");
-	CHECK_MSG(dimension_ == DIM_3D, "Wrong dimension.");
-   return ar[(xSize_ * ySize_)*k + xSize_*j + i];
-}
-
-///////////
-// CONST //
-///////////
-
-// Operator() 1D
-inline const real& Array::operator ()(int i) const
-{
-   //TODO
-   //static double dummy;
-	CHECK_MSG(i >= 0 && i < size_, "Index i out of bounds");
-	CHECK_MSG(dimension_ == DIM_1D, "Wrong dimension.");
-   return ar[i];
-}
-
-// Operator() 2D
-inline const real& Array::operator ()(int i,int j) const
-{
-   //TODO
-   //static double dummy;
-	CHECK_MSG(i >= 0 && i < xSize_, "Index i out of bounds");
-	CHECK_MSG(j >= 0 && j < ySize_, "Index j out of bounds");
-	CHECK_MSG(dimension_ == DIM_2D, "Wrong dimension.");
-   return ar[xSize_*j + i];
-}
-
-// Operator() 3D
-inline const real& Array::operator ()(int i, int j, int k) const
-{
-   //TODO
-   //static double dummy;
-	CHECK_MSG(i >= 0 && i < xSize_, "Index i out of bounds");
-	CHECK_MSG(j >= 0 && j < ySize_, "Index j out of bounds");
-	CHECK_MSG(k >= 0 && k < zSize_, "Index k out of bounds");
-	CHECK_MSG(dimension_ == DIM_3D, "Wrong dimension.");
-   return ar[(xSize_ * ySize_)*k + xSize_*j + i];
-}
 
 
 

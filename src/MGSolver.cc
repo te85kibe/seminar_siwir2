@@ -49,6 +49,11 @@ MGSolver::MGSolver ( int levels, Smoother & smoother )
 
 }
 
+MGSolver::~MGSolver()
+{
+	delete solution_;
+}
+
 void MGSolver::initialize_assignment_01 ()
 {
 
@@ -187,7 +192,7 @@ void MGSolver::v_cycle_pvt ( int pre_smooth,
                                                  * r_grids_[level-1],
                                                  pre_smooth,
                                                  h_intervals_[level-1],
-												 level == v_grids_.size());	// true if finest grid
+												 level == (int)v_grids_.size());	// true if finest grid
 
 #if 1
 
@@ -218,7 +223,7 @@ void MGSolver::v_cycle_pvt ( int pre_smooth,
                                                  * r_grids_[level-1],
                                                  post_smooth,
                                                  h_intervals_[level-1],
-												 level == v_grids_.size());	// true if finest grid
+												 level == (int)v_grids_.size());	// true if finest grid
 #endif
 
 #if 0

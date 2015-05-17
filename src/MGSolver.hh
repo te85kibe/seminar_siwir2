@@ -13,6 +13,7 @@ class MGSolver
 	
 		// will allocate memory for all needed arrays
 		MGSolver ( int levels, Smoother & smoother );
+		~MGSolver();
 
 		// initializes rhs and initial values for ex01
 		void initialize_assignment_01();
