@@ -2,22 +2,25 @@
 #include "MGSolver.hh"
 #include "Smoother.hh"
 #include "Timer.hh"
+#include <sys/time.h>
 
-int 
+
+	int 
 main(int argc, char **args)
 {
 	if(argc != 3){
 		std::cout << "Usage: ./mgsolve <number_of_levels> <number_of_V-cycles>" << std::endl;
-	return 0;
+		return 0;
 	}
-	
+
 	int l;
 	int n;
-	
-	//time
-	siwir::Timer t;
-	double time;
 
+	//time
+	//	siwir::Timer ti;
+	//	double time;
+
+	struct timeval t0, t;
 
 	std::istringstream iss(args[1]);
 	if(!(iss >> l)){
@@ -40,10 +43,17 @@ main(int argc, char **args)
 #else
 	solver.initialize_assignment_01();
 #endif
-	
+
+	gettimeofday(&t0, NULL);
+
 	solver.v_cycle(2, 1, n);
-	time = t.elapsed();
-	std::cout << "Time: " << "\t" << time << std::endl;
+
+	gettimeofday(&t, NULL);
+	std::cout << "Wall clock time of MG execution: " << ((int64_t) (t.tv_sec - t0.tv_sec) * (int64_t)1000000 + 					(int64_t)t.tv_usec - (int64_t)t0.tv_usec) * 1e-3 << " ms" << std::endl;
+
+	//	time = ti.elapsed();
+	//	std::cout << "Time: " << "\t" << time << std::endl;
+
 	solver.saveToFile("solution.txt");
 
 	return 0;
