@@ -133,25 +133,22 @@ void MGSolver::v_cycle     ( int pre_smooth,
 	for (int i = 0; i < times; i++)
 	{
 		v_cycle_pvt (pre_smooth, post_smooth, levels_);
-
 #if PRINT_RESIDUAL
 		real residual = residual_2d ( * v_grids_.back(),
 									  * r_grids_.back(),
 									  h_intervals_.back());
-		std::cout << "Residual (cylcle no " << i + 1 << "): " << residual << std::endl;
+		std::cout << "Residual (cylcle no " << i + 1 << "):  " << residual << std::endl;
 #endif
-
+		
+	} 
 #if PRINT_ERROR
 		real error = error_L2 ( * v_grids_.back(),
 								* solution_,
 								h_intervals_.back());
-		std::cout << "Error    (cylcle no " << i + 1 << ", h = " << h_intervals_.back() << " ): " << error    << std::endl;
-
-
+		std::cout << "Error: "  << error << std::endl;
 #endif
 
-		
-	} 
+
 }
 
 
