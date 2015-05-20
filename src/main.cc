@@ -1,7 +1,6 @@
 #include <iostream>
 #include "MGSolver.hh"
 #include "Smoother.hh"
-#include "Timer.hh"
 #include <sys/time.h>
 
 
