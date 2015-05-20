@@ -130,6 +130,10 @@ void MGSolver::v_cycle     ( int pre_smooth,
 {
 
 
+	real last_residual = residual_2d ( * v_grids_.back(),
+								  * r_grids_.back(),
+								  h_intervals_.back());
+
 	for (int i = 0; i < times; i++)
 	{
 		v_cycle_pvt (pre_smooth, post_smooth, levels_);
@@ -137,7 +141,14 @@ void MGSolver::v_cycle     ( int pre_smooth,
 		real residual = residual_2d ( * v_grids_.back(),
 									  * r_grids_.back(),
 									  h_intervals_.back());
-		std::cout << "Residual (cylcle no " << i + 1 << "):  " << residual << std::endl;
+
+		real convergence_rate = residual / last_residual;
+
+		std::cout << "Residual (L2-norm, cylcle no " << i + 1 << "):  " << residual << "\tConvergence rate: " << convergence_rate << std::endl;
+	
+			
+
+		last_residual = residual;
 #endif
 		
 	} 
@@ -145,7 +156,7 @@ void MGSolver::v_cycle     ( int pre_smooth,
 		real error = error_L2 ( * v_grids_.back(),
 								* solution_,
 								h_intervals_.back());
-		std::cout << "Error: "  << error << std::endl;
+		std::cout << "Error (L2-norm): "  << error << std::endl;
 #endif
 
 
