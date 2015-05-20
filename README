@@ -1,9 +1,7 @@
 To compile and link for the default task, do
-
-	$ make -f dirichlet.mak clean
-	$ make -f dirichlet.mak
+	
+	$ make
 
 To compile and link for the BONUS task, do
 
-	$ make -f neumann.mak clean
-	$ make -f neumann.mak
+	$ make neumann
