@@ -38,9 +38,11 @@ main(int argc, char **args)
 	Smoother smoother;
 	MGSolver solver(l, smoother);
 #ifdef NEUMANN
-	solver.initialize_assignment_01_BONUS();
+	solver.initialize_seminar();
+#elseif SEMINAR
+	solver.initialize_seminar();
 #else
-	solver.initialize_assignment_01();
+	solver.initialize_seminar();
 #endif
 
 	gettimeofday(&t0, NULL);

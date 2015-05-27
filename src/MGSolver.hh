@@ -17,6 +17,7 @@ class MGSolver
 
 		// initializes rhs and initial values for ex01
 		void initialize_assignment_01();
+		void initialize_seminar();
 		void initialize_assignment_01_BONUS ();
 		void initialize_random();
 

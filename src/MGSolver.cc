@@ -37,7 +37,7 @@ MGSolver::MGSolver ( int levels, Smoother & smoother )
 		v_grids_[i-1] = new Array ( std::pow(2, i) + 1, std::pow(2, i) + 1);
 		r_grids_[i-1] = new Array ( std::pow(2, i) + 1, std::pow(2, i) + 1);
 		tmp_grids_[i-1] = new Array ( std::pow(2, i) + 1, std::pow(2, i) + 1);
-		h_intervals_[i-1] = 1.0 / std::pow(2, i);
+		h_intervals_[i-1] = 2.0 / std::pow(2, i);
 
 		
 #if 0
@@ -82,6 +82,64 @@ void MGSolver::initialize_assignment_01 ()
 	}
 }
 
+void MGSolver::initialize_seminar ()
+{
+
+
+	Array * finest_grid = v_grids_.back();
+	real h              = h_intervals_.back();
+
+	// initialize bc on top boundary
+
+	for (int col = 0;
+         col < finest_grid->getSize(DIM_1D); 
+         col++)
+	{
+		real x = -1.0+h*col;
+		real radius = sqrt(1.0+x*x);
+		finest_grid->operator()(col, finest_grid->getSize(DIM_2D)-1) = std::pow(radius,0.5)*sin(0.5*atan2(1.0,x));
+
+	}
+	// initialize bc on right boundary
+	for (int row = 0;
+         row < finest_grid->getSize(DIM_2D); 
+         row++)
+	{
+		real y = -1.0+h*row;
+		real radius = sqrt(1.0+y*y);
+		finest_grid->operator()(finest_grid->getSize(DIM_1D)-1,row)  = std::pow(radius,0.5)*sin(0.5*atan2(y,1.0));
+	}
+	
+	// initialize bc on left boundary
+	for (int row = 0;
+         row < finest_grid->getSize(DIM_2D); 
+         row++)
+	{
+		real y = -1.0+h*row;
+		real radius = sqrt(1.0+y*y);
+		finest_grid->operator()(0,row)  = std::pow(radius,0.5)*sin(0.5*atan2(y,-1.0));
+	}
+	
+	// initialize bc on bottom boundary
+	for (int col = 0;
+         col < finest_grid->getSize(DIM_1D); 
+         col++)
+	{
+		real x = -1.0+h*col;
+		real radius = sqrt(1.0+x*x);
+		finest_grid->operator()(col,0) = std::pow(radius,0.5)*sin(0.5*atan2(-1.0,x));
+
+	}
+
+	// initialize solution
+	for (int row = 0; row < solution_->getSize(DIM_2D); row++)
+	{
+		for (int col = 0; col < solution_->getSize(DIM_1D); col++)
+		{
+			solution_->operator()(col, row) = 0;	
+		}
+	}
+}
 
 void MGSolver::initialize_assignment_01_BONUS ()
 {
