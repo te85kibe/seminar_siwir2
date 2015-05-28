@@ -97,7 +97,12 @@ void MGSolver::initialize_seminar ()
 	{
 		real x = -1.0+h*col;
 		real radius = sqrt(1.0+x*x);
-		finest_grid->operator()(col, finest_grid->getSize(DIM_2D)-1) = std::pow(radius,0.5)*sin(0.5*atan2(1.0,x));
+		real phi = atan2(1.0,x);
+		if(phi<0)
+		{
+			phi=phi+2*PI;
+		}
+		finest_grid->operator()(col, finest_grid->getSize(DIM_2D)-1) = std::pow(radius,0.5)*sin(0.5*phi);
 
 	}
 	// initialize bc on right boundary
@@ -107,7 +112,13 @@ void MGSolver::initialize_seminar ()
 	{
 		real y = -1.0+h*row;
 		real radius = sqrt(1.0+y*y);
-		finest_grid->operator()(finest_grid->getSize(DIM_1D)-1,row)  = std::pow(radius,0.5)*sin(0.5*atan2(y,1.0));
+		real phi = atan2(y,1.0);
+		if(phi<0)
+		{
+			phi=phi+2*PI;
+		}
+
+		finest_grid->operator()(finest_grid->getSize(DIM_1D)-1,row)  = std::pow(radius,0.5)*sin(0.5*phi);
 	}
 	
 	// initialize bc on left boundary
@@ -117,7 +128,13 @@ void MGSolver::initialize_seminar ()
 	{
 		real y = -1.0+h*row;
 		real radius = sqrt(1.0+y*y);
-		finest_grid->operator()(0,row)  = std::pow(radius,0.5)*sin(0.5*atan2(y,-1.0));
+		real phi = atan2(y,-1.0);
+		if(phi<0)
+		{
+			phi=phi+2*PI;
+		}
+
+		finest_grid->operator()(0,row)  = std::pow(radius,0.5)*sin(0.5*phi);
 	}
 	
 	// initialize bc on bottom boundary
@@ -127,9 +144,14 @@ void MGSolver::initialize_seminar ()
 	{
 		real x = -1.0+h*col;
 		real radius = sqrt(1.0+x*x);
-		finest_grid->operator()(col,0) = std::pow(radius,0.5)*sin(0.5*atan2(-1.0,x));
+		real phi = atan2(-1.0,x);
+		if(phi<0)
+		{
+			phi=phi+2*PI;
+		}
+		finest_grid->operator()(col,0) = std::pow(radius,0.5)*sin(0.5*phi);
 
-	}
+	}	
 
 	// initialize solution
 	for (int row = 0; row < solution_->getSize(DIM_2D); row++)
