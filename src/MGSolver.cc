@@ -369,7 +369,44 @@ void MGSolver::error_correction ( Array & u,
 	
 
 	// calculate I * e_2h (error to finer grid)
-	for (int j = 1; j < height-1; j++) {
+	for (int j = 1; j < height/2; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		int mid_i = 2 * i;	
+		int mid_j = 2 * j;	
+
+		e_h(mid_i - 1, mid_j + 1) += w1 * e_2h(i, j);
+		e_h(mid_i    , mid_j + 1) += w2 * e_2h(i, j);
+		e_h(mid_i + 1, mid_j + 1) += w3 * e_2h(i, j);
+		e_h(mid_i - 1, mid_j    ) += w4 * e_2h(i, j);
+		e_h(mid_i    , mid_j    ) += w5 * e_2h(i, j);
+		e_h(mid_i + 1, mid_j    ) += w6 * e_2h(i, j);
+		e_h(mid_i - 1, mid_j - 1) += w7 * e_2h(i, j);
+		e_h(mid_i    , mid_j - 1) += w8 * e_2h(i, j);
+		e_h(mid_i + 1, mid_j - 1) += w9 * e_2h(i, j);
+
+	}
+	}
+	for (int i = 1; i < width/2; i++)
+	{   
+		int j=height/2;
+
+		int mid_i = 2 * i;	
+		int mid_j = 2 * j;	
+
+		e_h(mid_i - 1, mid_j + 1) += w1 * e_2h(i, j);
+		e_h(mid_i    , mid_j + 1) += w2 * e_2h(i, j);
+		e_h(mid_i + 1, mid_j + 1) += w3 * e_2h(i, j);
+		e_h(mid_i - 1, mid_j    ) += w4 * e_2h(i, j);
+		e_h(mid_i    , mid_j    ) += w5 * e_2h(i, j);
+		e_h(mid_i + 1, mid_j    ) += w6 * e_2h(i, j);
+		e_h(mid_i - 1, mid_j - 1) += w7 * e_2h(i, j);
+		e_h(mid_i    , mid_j - 1) += w8 * e_2h(i, j);
+		e_h(mid_i + 1, mid_j - 1) += w9 * e_2h(i, j);
+
+	
+	}
+	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
 		int mid_i = 2 * i;	
@@ -388,17 +425,32 @@ void MGSolver::error_correction ( Array & u,
 	}
 	}
 
+
 	// add to the solution
 
 	width  = u.getSize(DIM_1D);
-    height = u.getSize(DIM_2D);
+   	height = u.getSize(DIM_2D);
 
-	for (int j = 1; j < height-1; j++) {
+	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
 		u(i, j) += e_h(i, j);
 	}
 	}
+
+	for (int i = 1; i < width/2; i++)
+	{	
+		int j=height/2;
+		u(i, j) += e_h(i, j);
+	}
+	for (int j = height/2+1; j < height-1; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		u(i, j) += e_h(i, j);
+	}
+	}
+
+
 
 }
 
@@ -418,7 +470,22 @@ void MGSolver::compose_right_hand_side ( Array & u,
     int height = u.getSize(DIM_2D);
 
 	// calculate f - Au
-	for (int j = 1; j < height-1; j++) {
+	for (int j = 1; j < height/2; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		res(i, j) = f(i, j) - h_2_inv * ( 4.0 * u(i, j) - u(i, j+1) - u(i, j-1) - u(i-1, j) - u(i+1, j) );
+	}   
+	}
+	
+	for (int i = 1; i < width/2; i++)
+	{	
+		int j=height/2;
+
+		res(i, j) = f(i, j) - h_2_inv * ( 4.0 * u(i, j) - u(i, j+1) - u(i, j-1) - u(i-1, j) - u(i+1, j) );
+	}   
+	
+
+	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
 		res(i, j) = f(i, j) - h_2_inv * ( 4.0 * u(i, j) - u(i, j+1) - u(i, j-1) - u(i-1, j) - u(i+1, j) );
@@ -449,7 +516,7 @@ void MGSolver::compose_right_hand_side ( Array & u,
 	real w9 = 0.0625;
 
 	// restrict to coarser domain
-	for (int j = 1; j < height-1; j++) {
+	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
 		int mid_i = 2*i;
@@ -466,6 +533,43 @@ void MGSolver::compose_right_hand_side ( Array & u,
 		             w9 * res(mid_i + 1, mid_j - 1);
 	}   
 	}
+	for (int i = 1; i < width/2; i++)
+	{	
+		int j=height/2;
+	  
+		int mid_i = 2*i;
+		int mid_j = 2*j;
+		
+		r_2h(i, j) = w1 * res(mid_i - 1, mid_j + 1) +
+		             w2 * res(mid_i    , mid_j + 1) +
+		             w3 * res(mid_i + 1, mid_j + 1) +
+		             w4 * res(mid_i - 1, mid_j    ) +
+		             w5 * res(mid_i    , mid_j    ) +
+		             w6 * res(mid_i + 1, mid_j    ) +
+		             w7 * res(mid_i - 1, mid_j - 1) +
+		             w8 * res(mid_i    , mid_j - 1) +
+		             w9 * res(mid_i + 1, mid_j - 1);
+	  
+	}
+	for (int j = height/2+1; j < height-1; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		int mid_i = 2*i;
+		int mid_j = 2*j;
+		
+		r_2h(i, j) = w1 * res(mid_i - 1, mid_j + 1) +
+		             w2 * res(mid_i    , mid_j + 1) +
+		             w3 * res(mid_i + 1, mid_j + 1) +
+		             w4 * res(mid_i - 1, mid_j    ) +
+		             w5 * res(mid_i    , mid_j    ) +
+		             w6 * res(mid_i + 1, mid_j    ) +
+		             w7 * res(mid_i - 1, mid_j - 1) +
+		             w8 * res(mid_i    , mid_j - 1) +
+		             w9 * res(mid_i + 1, mid_j - 1);
+	}   
+	}
+
+
 }
 
 void MGSolver::restrict_2d ( Array & u,
@@ -493,7 +597,7 @@ void MGSolver::restrict_2d ( Array & u,
 	real w9 = 0.0625;
 
 	// restrict to coarser domain
-	for (int j = 1; j < height-1; j++) {
+	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
 		int mid_i = 2*i;
@@ -510,6 +614,42 @@ void MGSolver::restrict_2d ( Array & u,
 		             w9 * u(mid_i + 1, mid_j - 1);
 	}
 	}
+	for (int i = 1; i < width/2; i++)
+	{	
+		int j=height/2;
+		int mid_i = 2*i;
+		int mid_j = 2*j;
+		
+		u_2h(i, j) = w1 * u(mid_i - 1, mid_j + 1) +
+		             w2 * u(mid_i    , mid_j + 1) +
+		             w3 * u(mid_i + 1, mid_j + 1) +
+		             w4 * u(mid_i - 1, mid_j    ) +
+		             w5 * u(mid_i    , mid_j    ) +
+		             w6 * u(mid_i + 1, mid_j    ) +
+		             w7 * u(mid_i - 1, mid_j - 1) +
+		             w8 * u(mid_i    , mid_j - 1) +
+		             w9 * u(mid_i + 1, mid_j - 1);
+	}
+	
+	for (int j = height/2+1; j < height-1; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		int mid_i = 2*i;
+		int mid_j = 2*j;
+		
+		u_2h(i, j) = w1 * u(mid_i - 1, mid_j + 1) +
+		             w2 * u(mid_i    , mid_j + 1) +
+		             w3 * u(mid_i + 1, mid_j + 1) +
+		             w4 * u(mid_i - 1, mid_j    ) +
+		             w5 * u(mid_i    , mid_j    ) +
+		             w6 * u(mid_i + 1, mid_j    ) +
+		             w7 * u(mid_i - 1, mid_j - 1) +
+		             w8 * u(mid_i    , mid_j - 1) +
+		             w9 * u(mid_i + 1, mid_j - 1);
+	}
+	}
+
+
 }
                              
 	
@@ -527,12 +667,26 @@ real MGSolver::residual_2d ( Array & u,
     int height = u.getSize(DIM_2D);
 
 	// add up squares of the entries of the residual
-	for (int j = 1; j < height-1; j++) {
+	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
 		sum += pow(f(i, j) - h_2_inv * ( 4.0 * u(i, j) - u(i, j+1) - u(i, j-1) - u(i-1, j) - u(i+1, j) ), 2.0);
 	}   
 	}
+	for (int i = 1; i < width/2; i++)
+	{	
+		int j=height/2;
+		sum += pow(f(i, j) - h_2_inv * ( 4.0 * u(i, j) - u(i, j+1) - u(i, j-1) - u(i-1, j) - u(i+1, j) ), 2.0);
+	}   
+	
+	for (int j = height/2+1; j < height-1; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		sum += pow(f(i, j) - h_2_inv * ( 4.0 * u(i, j) - u(i, j+1) - u(i, j-1) - u(i-1, j) - u(i+1, j) ), 2.0);
+	}   
+	}
+
+
 
 
 	return sqrt(sum / (real) ((width-2) * (height-2)));
@@ -549,12 +703,25 @@ real MGSolver::error_L2 ( Array & approximation,
     int height = approximation.getSize(DIM_2D);
 
 	// add up squares of the entries of the residual
-	for (int j = 1; j < height-1; j++) {
+	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
 		sum += pow(approximation(i,j) - solution(i,j), 2.0);
 	}   
 	}
+	for (int i = 1; i < width/2; i++)
+	{	
+		int j = height/2;
+		sum += pow(approximation(i,j) - solution(i,j), 2.0);  
+	}
+	for (int j = height/2+1; j < height-1; j++) {
+	for (int i = 1; i < width-1; i++)
+	{   
+		sum += pow(approximation(i,j) - solution(i,j), 2.0);
+	}   
+	}
+
+
 
 	return sqrt(sum / (real) ((width-2) * (height-2)));
 
