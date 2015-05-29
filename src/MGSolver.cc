@@ -158,9 +158,22 @@ void MGSolver::initialize_seminar ()
 	{
 		for (int col = 0; col < solution_->getSize(DIM_1D); col++)
 		{
-			solution_->operator()(col, row) = 0;	
+			real y = -1.0+(real)h*row;
+			real x = -1.0+(real)h*col;
+			real radius = sqrt(x*x+y*y);
+			real phi = atan2(y,x);
+			if(phi<0)
+			{
+				phi=phi+2*PI;
+			}
+			solution_->operator()(col, row) = sqrt(radius)*sin(0.5*phi);	
 		}
 	}
+
+		
+	// initialize rhs
+	r_grids_.back()->fill(0.0);
+
 }
 
 void MGSolver::initialize_assignment_01_BONUS ()
