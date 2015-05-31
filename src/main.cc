@@ -44,6 +44,7 @@ main(int argc, char **args)
 #else
 	solver.initialize_seminar();
 #endif
+	solver.saveToFile("init.dat");
 
 	gettimeofday(&t0, NULL);
 
@@ -55,7 +56,7 @@ main(int argc, char **args)
 	//	time = ti.elapsed();
 	//	std::cout << "Time: " << "\t" << time << std::endl;
 
-	solver.saveToFile("solution.txt");
+	solver.saveToFile("solution.dat");
 
 	return 0;
 }

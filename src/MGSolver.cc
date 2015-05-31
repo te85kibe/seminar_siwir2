@@ -736,7 +736,6 @@ int MGSolver::saveToFile(std::string filename) const
 	std::ofstream gnuFile(filename);
 	if (gnuFile.is_open())
 	{
-		gnuFile << "# x y u(x,y)" << "\n";
 		for (int j = u->getSize(DIM_2D) - 1; j >= 0; j--)
 		{
 			for (int i = 0; i < u->getSize(DIM_1D); i++)
