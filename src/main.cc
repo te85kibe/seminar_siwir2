@@ -37,13 +37,7 @@ main(int argc, char **args)
 
 	Smoother smoother;
 	MGSolver solver(l, smoother);
-#ifdef NEUMANN
 	solver.initialize_seminar();
-#elseif SEMINAR
-	solver.initialize_seminar();
-#else
-	solver.initialize_seminar();
-#endif
 	solver.saveToFile("init.dat");
 
 	gettimeofday(&t0, NULL);

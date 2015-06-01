@@ -4,7 +4,6 @@
 #include "Types.hh"
 #include "Array.hh"
 #include "MGSolver.hh"
-
 void Smoother::smooth_red_black_gauss_seidel_2d ( Array & u,    // modify this array
                                                   Array & f,    // rhs
                                                   int times,     // number of sweeps
