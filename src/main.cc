@@ -7,19 +7,16 @@
 	int 
 main(int argc, char **args)
 {
-	if(argc != 3){
-		std::cout << "Usage: ./mgsolve <number_of_levels> <number_of_V-cycles>" << std::endl;
+	if(argc != 2){
+		std::cout << "Usage: ./mgsolve <number_of_levels>" << std::endl;
 		return 0;
 	}
 
 	int l;
-	int n;
 
 	//time
 	//	siwir::Timer ti;
 	//	double time;
-
-	struct timeval t0, t;
 
 	std::istringstream iss(args[1]);
 	if(!(iss >> l)){
@@ -29,20 +26,15 @@ main(int argc, char **args)
 	iss.str("");
 	iss.clear();
 
-	iss.str(args[2]);
-	if(!(iss >> n)){
-		std::cerr << "Could not parse number of V-cycle argument: " << args[2] << std::endl;
-		return 1;
-	}
-
 	Smoother smoother;
 	MGSolver solver(l, smoother);
 	solver.initialize_seminar();
 	solver.saveToFile("init.dat");
+	struct timeval t0, t;
 
 	gettimeofday(&t0, NULL);
 
-	solver.v_cycle(2, 1, n);
+	solver.v_cycle(2, 1, 20);
 
 	gettimeofday(&t, NULL);
 	std::cout << "Wall clock time of MG execution: " << ((int64_t) (t.tv_sec - t0.tv_sec) * (int64_t)1000000 + 					(int64_t)t.tv_usec - (int64_t)t0.tv_usec) * 1e-3 << " ms" << std::endl;
