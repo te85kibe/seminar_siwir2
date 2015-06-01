@@ -2,7 +2,7 @@
 #include "MGSolver.hh"
 #include "Smoother.hh"
 #include <sys/time.h>
-
+#include <omp.h>
 
 	int 
 main(int argc, char **args)
