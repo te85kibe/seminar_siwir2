@@ -5,3 +5,5 @@ GCCDirichlet/
 mgsolve
 *.swp
 solution.txt
+solution.dat
+init.dat
