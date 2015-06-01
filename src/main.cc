@@ -29,6 +29,8 @@ int main(int argc, char **args)
 	MGSolver solver(l, smoother);
 	solver.initialize_seminar();
 	solver.saveToFile("init.dat");
+	std::cout<<"Your Alias: "<<"Thomas+Nils"<<std::endl;
+	
 	struct timeval t0, t;
 
 	gettimeofday(&t0, NULL);
