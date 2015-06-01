@@ -4,8 +4,7 @@
 #include <sys/time.h>
 #include <omp.h>
 
-	int 
-main(int argc, char **args)
+int main(int argc, char **args)
 {
 	if(argc != 2){
 		std::cout << "Usage: ./mgsolve <number_of_levels>" << std::endl;
