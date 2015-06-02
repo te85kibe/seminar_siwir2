@@ -3,6 +3,7 @@
 #include <cmath>
 #include <math.h>
 #include <fstream>
+#include <omp.h>
 
 #include "MGSolver.hh"
 #include "Array.hh"
@@ -343,6 +344,8 @@ void MGSolver::error_correction ( Array & u,
 	
 
 	// calculate I * e_2h (error to finer grid)
+
+
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -380,6 +383,7 @@ void MGSolver::error_correction ( Array & u,
 
 	
 	}
+
 	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -398,13 +402,13 @@ void MGSolver::error_correction ( Array & u,
 
 	}
 	}
-
+//	}
 
 	// add to the solution
 
 	width  = u.getSize(DIM_1D);
    	height = u.getSize(DIM_2D);
-
+	#pragma omp parallel for
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -417,6 +421,7 @@ void MGSolver::error_correction ( Array & u,
 		int j=height/2;
 		u(i, j) += e_h(i, j);
 	}
+	#pragma omp parallel for
 	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -444,6 +449,7 @@ void MGSolver::compose_right_hand_side ( Array & u,
     int height = u.getSize(DIM_2D);
 
 	// calculate f - Au
+	#pragma omp parallel for
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -458,7 +464,7 @@ void MGSolver::compose_right_hand_side ( Array & u,
 		res(i, j) = f(i, j) - h_2_inv * ( 4.0 * u(i, j) - u(i, j+1) - u(i, j-1) - u(i-1, j) - u(i+1, j) );
 	}   
 	
-
+	#pragma omp parallel for
 	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -490,6 +496,7 @@ void MGSolver::compose_right_hand_side ( Array & u,
 	real w9 = 0.0625;
 
 	// restrict to coarser domain
+	#pragma omp parallel for
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -525,22 +532,23 @@ void MGSolver::compose_right_hand_side ( Array & u,
 		             w9 * res(mid_i + 1, mid_j - 1);
 	  
 	}
+	#pragma omp parallel for
 	for (int j = height/2+1; j < height-1; j++) {
-	for (int i = 1; i < width-1; i++)
-	{   
-		int mid_i = 2*i;
-		int mid_j = 2*j;
-		
-		r_2h(i, j) = w1 * res(mid_i - 1, mid_j + 1) +
-		             w2 * res(mid_i    , mid_j + 1) +
-		             w3 * res(mid_i + 1, mid_j + 1) +
-		             w4 * res(mid_i - 1, mid_j    ) +
-		             w5 * res(mid_i    , mid_j    ) +
-		             w6 * res(mid_i + 1, mid_j    ) +
-		             w7 * res(mid_i - 1, mid_j - 1) +
-		             w8 * res(mid_i    , mid_j - 1) +
-		             w9 * res(mid_i + 1, mid_j - 1);
-	}   
+		for (int i = 1; i < width-1; i++)
+		{   
+			int mid_i = 2*i;
+			int mid_j = 2*j;
+
+			r_2h(i, j) = w1 * res(mid_i - 1, mid_j + 1) +
+				w2 * res(mid_i    , mid_j + 1) +
+				w3 * res(mid_i + 1, mid_j + 1) +
+				w4 * res(mid_i - 1, mid_j    ) +
+				w5 * res(mid_i    , mid_j    ) +
+				w6 * res(mid_i + 1, mid_j    ) +
+				w7 * res(mid_i - 1, mid_j - 1) +
+				w8 * res(mid_i    , mid_j - 1) +
+				w9 * res(mid_i + 1, mid_j - 1);
+		}   
 	}
 
 
@@ -571,6 +579,7 @@ void MGSolver::restrict_2d ( Array & u,
 	real w9 = 0.0625;
 
 	// restrict to coarser domain
+	#pragma omp parallel for
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -604,7 +613,7 @@ void MGSolver::restrict_2d ( Array & u,
 		             w8 * u(mid_i    , mid_j - 1) +
 		             w9 * u(mid_i + 1, mid_j - 1);
 	}
-	
+	#pragma omp parallel for
 	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -716,7 +725,7 @@ int MGSolver::saveToFile(std::string filename) const
 			{
 				gnuFile << (double) -1.0+2.0*i/(u->getSize(DIM_1D)-1) << " " << (double) 1.0-2.0*j/(u->getSize(DIM_2D)-1) << " " << u->operator()(i,j) << "\n";
 			}
-			gnuFile << "\n";
+		//	gnuFile << "\n";
 		}
 		gnuFile.close();
 		return 0;

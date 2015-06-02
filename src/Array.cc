@@ -84,7 +84,7 @@ Array& Array::operator=(const Array& s)
 	real *local_ar = new real[s.getSize()];
 	real *s_ar = s.getArray();
 
-	for (int i = 0; i < s.getSize(); i++)
+	for (int i = 1; i < s.getSize()-1; i++)
 	{
 		local_ar[i] = s_ar[i];
 	}
