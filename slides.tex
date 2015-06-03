@@ -1,0 +1,95 @@
+\documentclass[handout]{beamer}
+% \usetheme{Goettingen}
+
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+
+\usepackage{setspace}
+
+\usepackage{color}
+\usepackage{transparent}
+
+\usepackage{alltt}
+
+\usepackage{amsmath, calc}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\usepackage{bbm}
+
+% frame number
+% \setbeamertemplate{footline}[frame number]
+% transparent cover
+\setbeamercovered{invisible} % or transparent
+
+% define \norm{}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\setbeamertemplate{footline}[text line]{%
+  \parbox{\linewidth}{\vspace*{-8pt}Multigrid Seminar\hfill\insertshortauthor\hfill}}
+\setbeamertemplate{navigation symbols}{}
+
+\title{Multigrid Seminar}
+\subtitle{Simulation and Scientific Computing 2}
+\author{Thomas Köster, Nils Kohl}
+\date{6. Februar 2014}
+\begin{document}
+	% \frame{\titlepage}
+    
+    \begin{frame}
+        \frametitle{Outline}
+		Optimizations:
+		\begin{itemize}
+			\item W-Cycles and Successive Overrelaxation (SOR) to speed up convergence
+			\pause
+			\item Red-Black grid ordering to simplify the parallelization process
+			\pause
+			\item OpenMP with static scheduling to parallelize smoothing and restriction/interpolation
+		\end{itemize}
+    \end{frame}    
+
+    \section{Überblick}    	
+    \begin{frame}
+        \frametitle{Time measurements}
+		Measurements with the smallest possible number of cycles to fit the error constraints:
+		\center
+		\begin{tikzpicture}
+			\begin{axis}[
+				xlabel=Threads,
+				ylabel=Execution Time (in seconds)]
+
+			\addplot[color=red,mark=x] coordinates {
+				(1, 5.42)
+				(2, 2.87)
+				(4, 1.6)
+				(8, 1.6)
+			};
+			\addlegendentry{\tiny{W-Cycle<2,1>, 4 iterations}}
+			
+			\addplot[color=blue,mark=*] coordinates {
+				(1, 6.38)
+				(2, 3.32)
+				(4, 1.81)
+				(8, 1.77)
+			};
+
+			\addlegendentry{\tiny{V-Cycle<2,1>, 7 iterations}}
+
+			\addplot[color=green,mark=o] coordinates {
+				(1, 7.54)
+				(2, 4.03)
+				(4, 3.95)
+				(8, 2.29)
+			};
+
+			\addlegendentry{\tiny{V-Cycle<1,0>, 9 iterations}}
+
+			\end{axis}
+		\end{tikzpicture}
+    \end{frame}
+\end{document}
