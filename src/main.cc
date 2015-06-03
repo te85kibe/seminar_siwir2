@@ -35,7 +35,7 @@ int main(int argc, char **args)
 
 	gettimeofday(&t0, NULL);
 
-	solver.v_cycle(2, 1, 7);
+	solver.v_cycle(2, 1, 1);
 
 	gettimeofday(&t, NULL);
 	std::cout << "Wall clock time of MG execution: " << ((int64_t) (t.tv_sec - t0.tv_sec) * (int64_t)1000000 + 					(int64_t)t.tv_usec - (int64_t)t0.tv_usec) * 1e-3 << " ms" << std::endl;

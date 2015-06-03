@@ -284,6 +284,8 @@ void MGSolver::v_cycle_pvt ( int pre_smooth,
 
 	// 3.recursive call
 	v_cycle_pvt ( pre_smooth, post_smooth, level-1 );
+	// 3.recursive call
+	v_cycle_pvt ( pre_smooth, post_smooth, level-1 );
 
 
 	// 4. correction
@@ -408,7 +410,7 @@ void MGSolver::error_correction ( Array & u,
 
 	width  = u.getSize(DIM_1D);
    	height = u.getSize(DIM_2D);
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(2) schedule(static)
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -421,7 +423,7 @@ void MGSolver::error_correction ( Array & u,
 		int j=height/2;
 		u(i, j) += e_h(i, j);
 	}
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(2) schedule(static)
 	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -449,7 +451,7 @@ void MGSolver::compose_right_hand_side ( Array & u,
     int height = u.getSize(DIM_2D);
 
 	// calculate f - Au
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(2) schedule(static)
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -464,7 +466,7 @@ void MGSolver::compose_right_hand_side ( Array & u,
 		res(i, j) = f(i, j) - h_2_inv * ( 4.0 * u(i, j) - u(i, j+1) - u(i, j-1) - u(i-1, j) - u(i+1, j) );
 	}   
 	
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(2) schedule(static)
 	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -496,7 +498,7 @@ void MGSolver::compose_right_hand_side ( Array & u,
 	real w9 = 0.0625;
 
 	// restrict to coarser domain
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(2) schedule(static)
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -532,7 +534,7 @@ void MGSolver::compose_right_hand_side ( Array & u,
 		             w9 * res(mid_i + 1, mid_j - 1);
 	  
 	}
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(2) schedule(static)
 	for (int j = height/2+1; j < height-1; j++) {
 		for (int i = 1; i < width-1; i++)
 		{   
@@ -579,7 +581,7 @@ void MGSolver::restrict_2d ( Array & u,
 	real w9 = 0.0625;
 
 	// restrict to coarser domain
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(2) schedule(static)
 	for (int j = 1; j < height/2; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
@@ -613,7 +615,7 @@ void MGSolver::restrict_2d ( Array & u,
 		             w8 * u(mid_i    , mid_j - 1) +
 		             w9 * u(mid_i + 1, mid_j - 1);
 	}
-	#pragma omp parallel for
+	#pragma omp parallel for collapse(2) schedule(static)
 	for (int j = height/2+1; j < height-1; j++) {
 	for (int i = 1; i < width-1; i++)
 	{   
